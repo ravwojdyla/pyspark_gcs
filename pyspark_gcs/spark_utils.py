@@ -16,7 +16,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
@@ -58,6 +58,7 @@ def get_gcs_enabled_config(
     project: Optional[str] = None,
     jars_dir: Optional[Path] = None,
     conf: Optional[SparkConf] = None,
+    service_account_keyfile_path: Optional[Path] = None,
 ) -> SparkConf:
     """Returns GCS enabled SparkConf object, which you can use to create Session/Context"""
     jconf = conf._jconf if conf else None
@@ -67,6 +68,12 @@ def get_gcs_enabled_config(
     )
     if project:
         conf.set("spark.hadoop.fs.gs.project.id", project)
+
+    if service_account_keyfile_path:
+        conf.set("spark.hadoop.fs.gs.auth.service.account.enable", "true").set(
+            "spark.hadoop.fs.gs.auth.service.account.json.keyfile",
+            service_account_keyfile_path.as_posix(),
+        )
 
     jars = jars_dir or _get_spark_jars_path()
     if not _connector_already_installed(jars):
@@ -94,12 +101,21 @@ def get_gcs_enabled_config(
 
 
 def get_spark_session(
-    project: Optional[str] = None, conf: Optional[SparkConf] = None
+    service_account_keyfile_path: Union[str, Path, None] = None,
+    project: Optional[str] = None,
+    conf: Optional[SparkConf] = None,
 ) -> SparkSession:
     """
-    Returns GCS enabled SparkSession. You need to provide project, and you may
-    provide extra Spark config in the `conf` parameter.
+    Returns GCS enabled SparkSession. You may specify `service_account_keyfile_path`,
+    `project`, and/or extra Spark config in the `conf` parameter.
     """
+    sa_keyfile = (
+        Path(service_account_keyfile_path) if service_account_keyfile_path else None
+    )
+    if sa_keyfile and not sa_keyfile.exists():
+        raise ValueError(
+            f"Service Account keyfile {service_account_keyfile_path} does not exist"
+        )
     return SparkSession.builder.config(
         conf=get_gcs_enabled_config(project, conf=conf),
     ).getOrCreate()
