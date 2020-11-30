@@ -6,8 +6,7 @@ pyspark_gcs
 
 ## Raison d'être
 
-pyspark package comes with common jars, it includes AWS/S3 connector/FS support
-but doesn't include [GCS FS support](https://cloud.google.com/dataproc/docs/concepts/connectors/cloud-storage).
+pyspark package doesn't include [GCS FS support](https://cloud.google.com/dataproc/docs/concepts/connectors/cloud-storage).
 pyspark user needs to manually configure/install GCS jars. This package adds GCS
 batteries for pyspark. This is essentially a workaround for [SPARK-33605](https://issues.apache.org/jira/browse/SPARK-33605).
 
