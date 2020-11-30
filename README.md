@@ -1,6 +1,7 @@
 pyspark_gcs
 ===========
 
+[![Build status](https://github.com/ravwojdyla/pyspark_gcs/workflows/Build/badge.svg?branch=master)](https://github.com/ravwojdyla/pyspark_gcs/actions?query=workflow%3A%22Build%22+branch%3Amaster)
 [![GitHub license](https://img.shields.io/github/license/ravwojdyla/pyspark_gcs.svg)](./LICENSE)
 
 ## Raison d'être
