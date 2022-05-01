@@ -49,9 +49,4 @@ def test_config_use_our_connector(monkeypatch: MonkeyPatch) -> None:
     c = get_gcs_enabled_config("foobar")
     assert c.contains("spark.hadoop.fs.gs.impl")
     assert c.get("spark.hadoop.fs.gs.project.id") == "foobar"
-    assert "gcs-connector-hadoop3-2.1.6-shaded.jar" in c.get("spark.jars")
-    jars.joinpath("hadoop-common-2-blah.jar").touch()
-    c = get_gcs_enabled_config("foobar")
-    assert c.contains("spark.hadoop.fs.gs.impl")
-    assert c.get("spark.hadoop.fs.gs.project.id") == "foobar"
-    assert "gcs-connector-hadoop2-2.1.6-shaded.jar" in c.get("spark.jars")
+    assert "gcs-connector-hadoop3-2.2.6-shaded.jar" in c.get("spark.jars")

@@ -61,7 +61,7 @@ def get_gcs_enabled_config(
     service_account_keyfile_path: Optional[Path] = None,
 ) -> SparkConf:
     """Returns GCS enabled SparkConf object, which you can use to create Session/Context"""
-    jconf = conf._jconf if conf else None
+    jconf = conf._jconf if conf else None  # type:ignore[attr-defined]
     conf = SparkConf(_jconf=jconf).set(
         "spark.hadoop.fs.gs.impl",
         "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem",
@@ -82,14 +82,11 @@ def get_gcs_enabled_config(
         # so we should be able to operate on files like FS to find the
         # gcs jar file:
         if hadoop_major == 2:
-            logger.debug("Inferred Hadoop 2, using hadoop2 GCS connector jar")
-            gcs_connector_jar = Path(__file__).parent.joinpath(
-                "jars", "gcs-connector-hadoop2-2.1.6-shaded.jar"
-            )
+            raise ValueError("Hadoop 2 not supported anymore")
         else:
             logger.debug("Inferred Hadoop 3, using hadoop3 GCS connector jar")
             gcs_connector_jar = Path(__file__).parent.joinpath(
-                "jars", "gcs-connector-hadoop3-2.1.6-shaded.jar"
+                "jars", "gcs-connector-hadoop3-2.2.6-shaded.jar"
             )
         assert gcs_connector_jar.exists(), (
             "There is something wrong with the pyspark_gcs installation, "
